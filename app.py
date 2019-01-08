@@ -42,10 +42,15 @@ for row in table_body.findAll("tr"):
     for td in row.findAll("td", {"class":"right"}):
            if td.attrs['data-stat'] == "wins":
                wins.append(td.text)
-        
+
 print(wins)
 
-       
+# Shawn firt Scrappin
+# for row in table_body.findAll("tr"):
+#     for td in row.findAll("td"):
+#         if "wins" in str(td):
+#             print(str(td)[-7:-5])
+
 # dicty = {"pg":"D Russell", "sg": "m ballard", "sf":"lawerence", "pf":"jath", "c":"malorie"}
 # r.set('foo',"bar")
 # print(r.get('foo'))
