@@ -39,23 +39,13 @@ wins = []
 
 # iterate throught t body to findAll rows
 for row in table_body.findAll("tr"):
-<<<<<<< HEAD
     for td in row.findAll("td", {"class":"right"}):
            if td.attrs['data-stat'] == "wins":
                wins.append(td.text)
         
 print(wins)
 
-
-
-=======
-    for td in row.findAll("td"):
-            
-
-# dicty = {"pg":"D Russell", "sg": "m ballard", "sf":"lawerence", "pf":"jath", "c":"malorie"}
->>>>>>> a631cc006e129d38af9b748db2a7695cba247746
-
-        
+       
 # dicty = {"pg":"D Russell", "sg": "m ballard", "sf":"lawerence", "pf":"jath", "c":"malorie"}
 # r.set('foo',"bar")
 # print(r.get('foo'))
@@ -66,9 +56,4 @@ print(wins)
 # print(r.hgetall("team13"))
 # r.hmset("brooklyn", dicty)
 # print(r.hgetall("brooklyn"))
-<<<<<<< HEAD
 # print(r.keys())
-=======
-
-# print(r.keys())
->>>>>>> a631cc006e129d38af9b748db2a7695cba247746
