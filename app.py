@@ -40,9 +40,9 @@ table_body = soup.tbody
 # iterate throught t body to findAll rows
 for row in table_body.findAll("tr"):
     for td in row.findAll("td"):
-            print(td)
-    
-dicty = {"pg":"D Russell", "sg": "m ballard", "sf":"lawerence", "pf":"jath", "c":"malorie"}
+            
+
+# dicty = {"pg":"D Russell", "sg": "m ballard", "sf":"lawerence", "pf":"jath", "c":"malorie"}
 
 # r.set('foo',"bar")
 # print(r.get('foo'))
