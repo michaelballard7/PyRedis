@@ -3,7 +3,8 @@ import requests
 import pandas as pd
 import re
 
-url = "https://www.basketball-reference.com/"
+url = "https://www.basketball-reference.com/" #home
+url_no_slash = "https://www.basketball-reference.com" #home
 
 year_for_url = "2019.html"
 response = requests.get(url)
@@ -12,11 +13,11 @@ soup = bs(data, 'html.parser')
 all_teams = soup.find('div', {"id":"teams"})
 teams = soup.find_all('a')
 
-npo_players = {}
+npo_all_player_games = {}
 data_no = 0
 for team in teams:
     if 'Franchise' in str(team.get('title')):
-        team_url = url + team.get('href') + year_for_url
+        team_url = url + team.get('href') + year_for_url #team url
         team_response = requests.get(team_url)
         team_data = team_response.text
         team_soup = bs(team_data, 'html.parser')
@@ -29,128 +30,222 @@ for team in teams:
             body = content.find_all('tbody')
             rows = body[0].find_all('tr')
             for row in rows:
-                player_url = url + row.find('a').get('href')
+                player_url = url + row.find('a').get('href') #player url
+                # player_url = "https://www.basketball-reference.com/players/c/cartevi01.html"
                 player_response = requests.get(player_url)
                 player_data = player_response.text
                 player_soup = bs(player_data, 'html.parser')
-                # print('SOUP', player_soup)
-                name = player_soup.find('h1', {"itemprop":"name"}).text
-                # print(name)
+                name = player_soup.find('div', {"id":"info"})
+                player_name = name.find('h1', {"itemprop":"name"}).text
+                print(player_name)
                 per = player_soup.find('div', {"id":"all_per_game"})
                 if per:
                     table = per.find_all('tr', {"class":"full_table"})
-                    count = 0
-                    start_year = 2019
-                    year = []
-                    age = []
-                    team_id = []
-                    pos = []
-                    g = []
-                    gs = []
-                    mp_per_g = []
-                    fg_per_g = []
-                    fga_per_g = []
-                    fg_pct = []
-                    fg3_per_g = []
-                    fg3a_per_g = []
-                    fg3_pct = []
-                    fg2_per_g = []
-                    fg2a_per_g = []
-                    fg2_pct = []
-                    efg_pct = []
-                    ft_per_g = []
-                    fta_per_g = []
-                    ft_pct = []
-                    orb_per_g = []
-                    drb_per_g = []
-                    ast_per_g = []
-                    stl_per_g = []
-                    blk_per_g = []
-                    tov_per_g = []
-                    pf_per_g = []
-                    pts_per_g = []
-
                     for stat_row in table:
-                        year.insert(0, start_year)
-                        start_year -= 1
-                        row = stat_row.find_all('td')
+                        row = stat_row.find_all('th')
                         for r in row:
-                            if r.attrs['data-stat'] == "age":
-                                age.append(r.text)
-                            if r.attrs['data-stat'] == "team_id":
-                                team_id.append(r.text)
-                            if r.attrs['data-stat'] == "pos":
-                                pos.append(r.text)
-                            if r.attrs['data-stat'] == "g":
-                                g.append(r.text)
-                            if r.attrs['data-stat'] == "gs":
-                                gs.append(r.text)
-                            if r.attrs['data-stat'] == "mp_per_g":
-                                mp_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg_per_g":
-                                fg_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fga_per_g":
-                                fga_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg_pct":
-                                fg_pct.append(r.text)
-                            if r.attrs['data-stat'] == "fg3_per_g":
-                                fg3_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg3a_per_g":
-                                fg3a_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg3_pct":
-                                fg3_pct.append(r.text)
-                            if r.attrs['data-stat'] == "fg2_per_g":
-                                fg2_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg2a_per_g":
-                                fg2a_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fg2_pct":
-                                fg2_pct.append(r.text)
-                            if r.attrs['data-stat'] == "efg_pct":
-                                efg_pct.append(r.text)
-                            if r.attrs['data-stat'] == "ft_per_g":
-                                ft_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "fta_per_g":
-                                fta_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "ft_pct":
-                                ft_pct.append(r.text)
-                            if r.attrs['data-stat'] == "orb_per_g":
-                                orb_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "drb_per_g":
-                                drb_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "ast_per_g":
-                                ast_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "stl_per_g":
-                                stl_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "blk_per_g":
-                                blk_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "tov_per_g":
-                                tov_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "pf_per_g":
-                                pf_per_g.append(r.text)
-                            if r.attrs['data-stat'] == "pts_per_g":
-                                pts_per_g.append(r.text)
-                    print(name, player_url)
-                    print('\nYear', year, '\nAge:', age, '\nTeam:', team_id, '\nPosition:', pos, '\nGames:', g, '\nGames Started:', gs, '\nMinutes Per Game', mp_per_g, '\nField Goals Per Game:', fg_per_g, '\nField Goal Attempts Per Game:', fga_per_g, '\nField Goal Percent:', fg_pct, '\n3-Point Field Goals Per Game:', fg3_per_g, '\n3-Point Field Goal Attempts Per Game:', fg3a_per_g, '\n3-Point Field Goal Percent:', fg3_pct, '\n2-Point Field Goals Per Game:', fg2_per_g, '\n2-Point Field Goal Attempts Per Game:', fg2a_per_g, '\n2-Point Field Goal Percent:', fg2_pct, '\nEffective Field Goal Percent:', efg_pct, '\nFree Throws Per Game:', ft_per_g, '\nFree Throw Attempts Per Game:', fta_per_g, '\nFree Throw Percent:', ft_pct, '\nOffensive Rebounds Per Game:', orb_per_g, '\nDefensive Rebounds Per Game:', drb_per_g, '\nAssists Per Game:', ast_per_g, '\nSteals Per Game:', stl_per_g, '\nBlocks Per Game:', blk_per_g, '\nTurnovers Per Game:', tov_per_g, '\nPersonal Fouls Per Game:', pf_per_g, '\nPoints Per Game:', pts_per_g)
-                    print('\n-----------------------------------------------------------')
-                    for years in age:
-                        npo_players[data_no] = [name, year[count], age[count], team_id[count], pos[count], g[count], gs[count], mp_per_g[count], fg_per_g[count], fga_per_g[count], fg_pct[count], fg3_per_g[count], fg3a_per_g[count], fg3_pct[count], fg2_per_g[count], fg2a_per_g[count], fg2_pct[count], efg_pct[count], ft_per_g[count], fta_per_g[count], ft_pct[count], orb_per_g[count], drb_per_g[count], ast_per_g[count], stl_per_g[count], blk_per_g[count], tov_per_g[count], pf_per_g[count], pts_per_g[count]]
-                        data_no += 1
-                        count += 1
 
-npo_players_df = pd.DataFrame.from_dict(npo_players, orient = 'index', columns = ['Name', 'Year', 'Age', 'Team', 'Position', 'Games', 'Games Started', 'Minutes Per Game', 'Field Goals Per Game', 'Field Goal Attempts Per Game', 'Field Goal Percent', '3-Point Field Goals Per Game', '3-Point Field Goal Attempts Per Game', '3-Point Field Goal Percent', '2-Point Field Goals Per Game', '2-Point Field Goal Attempts Per Game', '2-Point Field Goal Percent', 'Effective Field Goal Percent', 'Free Throws Per Game', 'Free Throw Attempts Per Game', 'Free Throw Percent', 'Offensive Rebounds Per Game', 'Defensive Rebounds Per Game', 'Assists Per Game', 'Steals Per Game', 'Blocks Per Game', 'Turnovers Per Game', 'Personal Fouls Per Game', 'Points Per Game'])
-print(npo_players_df.head())
-npo_players_df.to_csv('npo_players.csv')
+                            ## where we get the indivual seasons start new function around here
+                            ## for r in row:
+                            ##   get_season_stats(r)
+                            ## something simple like this
+
+                            table_break_count = 0
+                            gamelog_anchor_tag = r.find('a')
+                            print("gamelog_anchor_tag", gamelog_anchor_tag)
+                            gamelog_url = gamelog_anchor_tag.get('href')
+                            player_season_url = url_no_slash + gamelog_url #season url
+                            season_response = requests.get(player_season_url)
+                            season_data = season_response.text
+                            season_soup = bs(season_data, 'html.parser')
+                            season_body = season_soup.tbody
+                            season_rows = season_body.find_all('tr')
+                            count = 0
+                            dates = []
+                            age = []
+                            team_id = []
+                            game_location = []
+                            opp_id = []
+                            game_result = []
+                            gs = []
+                            mp = []
+                            fg = []
+                            fga = []
+                            fg_pct = []
+                            fg3 = []
+                            fg3a = []
+                            fg3_pct = []
+                            ft = []
+                            fta = []
+                            ft_pct = []
+                            orb = []
+                            drb = []
+                            trb = []
+                            ast = []
+                            stl = []
+                            blk = []
+                            tov = []
+                            pf = []
+                            pts = []
+                            game_score = []
+                            plus_minus = []
+                            for r in season_rows:
+                                th = r.find('th', {"data-stat":"ranker"}).text
+                                if "Rk" not in th:
+                                    for q in r.find_all('td'):
+                                        if q.attrs['data-stat'] == 'reason':
+                                            gs.append('dnp')
+                                            mp.append('dnp')
+                                            fg.append('dnp')
+                                            fga.append('dnp')
+                                            fg_pct.append('dnp')
+                                            fg3.append('dnp')
+                                            fg3a.append('dnp')
+                                            fg3_pct.append('dnp')
+                                            ft.append('dnp')
+                                            fta.append('dnp')
+                                            ft_pct.append('dnp')
+                                            orb.append('dnp')
+                                            drb.append('dnp')
+                                            trb.append('dnp')
+                                            ast.append('dnp')
+                                            stl.append('dnp')
+                                            blk.append('dnp')
+                                            tov.append('dnp')
+                                            pf.append('dnp')
+                                            pts.append('dnp')
+                                            game_score.append('dnp')
+                                            plus_minus.append('dnp')
+                                        if q.attrs['data-stat'] == "date_game":
+                                            dates.append(q.text)
+                                        if q.attrs['data-stat'] == "age":
+                                            age.append(q.text)
+                                        if q.attrs['data-stat'] == "team_id":
+                                            team_id.append(q.text)
+                                        if q.attrs['data-stat'] == "game_location":
+                                            if q.text == "":
+                                                game_location.append("home")
+                                            else:
+                                                game_location.append("away")
+                                        if q.attrs['data-stat'] == "opp_id":
+                                            opp_id.append(q.text)
+                                        if q.attrs['data-stat'] == "game_result":
+                                            game_result.append(q.text)
+                                        if q.attrs['data-stat'] == "mp":
+                                            mp.append(q.text)
+                                        if q.attrs['data-stat'] == 'gs':
+                                            gs.append(q.text)
+                                        if q.attrs['data-stat'] == "fg":
+                                            if q.text == "":
+                                                fg.append(0)
+                                            else:
+                                                fg.append(q.text)
+                                        if q.attrs['data-stat'] == "fga":
+                                            if q.text == "":
+                                                fga.append(0)
+                                            else:
+                                                fga.append(q.text)
+                                        if q.attrs['data-stat'] == "fg_pct":
+                                            if q.text == "":
+                                                fg_pct.append(0.0)
+                                            else:
+                                                fg_pct.append(q.text)
+                                        if q.attrs['data-stat'] == "fg3":
+                                            if q.text == "":
+                                                fg3.append(0)
+                                            else:
+                                                fg3.append(q.text)
+                                        if q.attrs['data-stat'] == "fg3a":
+                                            if q.text == "":
+                                                fg3a.append(0)
+                                            else:
+                                                fg3a.append(q.text)
+                                        if q.attrs['data-stat'] == "fg3_pct":
+                                            if q.text == "":
+                                                fg3_pct.append(0.0)
+                                            else:
+                                                fg3_pct.append(q.text)
+                                        if q.attrs['data-stat'] == "ft":
+                                            if q.text == "":
+                                                ft.append(0)
+                                            else:
+                                                ft.append(q.text)
+                                        if q.attrs['data-stat'] == "fta":
+                                            if q.text == "":
+                                                fta.append(0)
+                                            else:
+                                                fta.append(q.text)
+                                        if q.attrs['data-stat'] == "ft_pct":
+                                            if q.text == "":
+                                                ft_pct.append(0.0)
+                                            else:
+                                                ft_pct.append(q.text)
+                                        if q.attrs['data-stat'] == "orb":
+                                            if q.text == "":
+                                                orb.append(0)
+                                            else:
+                                                orb.append(q.text)
+                                        if q.attrs['data-stat'] == "drb":
+                                            if q.text == "":
+                                                drb.append(0)
+                                            else:
+                                                drb.append(q.text)
+                                        if q.attrs['data-stat'] == "trb":
+                                            if q.text == "":
+                                                trb.append(0)
+                                            else:
+                                                trb.append(q.text)
+                                        if q.attrs['data-stat'] == "ast":
+                                            if q.text == "":
+                                                ast.append(0)
+                                            else:
+                                                ast.append(q.text)
+                                        if q.attrs['data-stat'] == "stl":
+                                            if q.text == "":
+                                                stl.append(0)
+                                            else:
+                                                stl.append(q.text)
+                                        if q.attrs['data-stat'] == "blk":
+                                            if q.text == "":
+                                                blk.append(0)
+                                            else:
+                                                blk.append(q.text)
+                                        if q.attrs['data-stat'] == "tov":
+                                            if q.text == "":
+                                                tov.append(0)
+                                            else:
+                                                tov.append(q.text)
+                                        if q.attrs['data-stat'] == "pf":
+                                            if q.text == "":
+                                                pf.append(0)
+                                            else:
+                                                pf.append(q.text)
+                                        if q.attrs['data-stat'] == "pts":
+                                            if q.text == "":
+                                                pts.append(0)
+                                            else:
+                                                pts.append(q.text)
+                                        if q.attrs['data-stat'] == "game_score":
+                                            if q.text == "":
+                                                game_score.append(0)
+                                            else:
+                                                game_score.append(q.text)
+                                        if q.attrs['data-stat'] == "plus_minus":
+                                            if q.text == "":
+                                                plus_minus.append(0)
+                                            else:
+                                                plus_minus.append(q.text)
 
 
-
-
-
-
-
-
-
-# '\nAge:', age, '\nTeam:', team_id, '\nGames:', g, '\nGames Started:', gs, '\nMinutes Per Game', mp_per_g
-# , '\nField Goal Percent:', fg_pct, '\n3-Point Field Goals Per Game:', fg3_per_g, '\n3-Point Field Goal Attempts Per Game:', fg3a_per_g, '\n3-Point Field Goal Percent:', fg3_pct, '\n2-Point Field Goals Per Game:', fg2_per_g, '\n2-Point Field Goal Attempts Per Game:', fg2a_per_g, '\n2-Point Field Goal Percent:', fg2_pct, '\nEffective Field Goal Percent:', efg_pct, '\nFree Throws Per Game:', ft_per_g, '\nFree Throw Attempts Per Game:', fta_per_g, '\nFree Throw Percent:', ft_pct, '\nOffensive Rebounds Per Game:', orb_per_g, '\nDefensive Rebounds Per Game:', drb_per_g, '\nAssists Per Game:', ast_per_g, '\nSteals Per Game:', stl_per_g, '\nBlocks Per Game:', blk_per_g, '\nTurnovers Per Game:', tov_per_g, '\nPersonal Fouls Per Game:', pf_per_g, '\nPoints Per Game:', pts_per_g
-
-
-# name, age[count], team_id[count], g[count], gs[count], mp_per_g[count], fg_per_g[count], fga_per_g[count], fg_pct[count], fg3_per_g[count], fg3a_per_g[count], fg3_pct[count], fg2_per_g[count], fg2a_per_g[count], fg2_pct[count], efg_pct[count], ft_per_g[count], fta_per_g[count], ft_pct[count], orb_per_g[count], drb_per_g[count], ast_per_g[count], stl_per_g[count], blk_per_g[count], tov_per_g[count], pf_per_g[count], pts_per_g[count]
+                            count+=1
+                            game_count = 0
+                            for game in dates:
+                                if len(plus_minus) == game_count:
+                                    plus_minus.append('not tracked')
+                                # print('GOR LOOP: ', age[game_count], team_id[game_count])
+                                npo_all_player_games[data_no] = [player_name, dates[game_count], age[game_count], game_location[game_count], team_id[game_count], opp_id[game_count], game_result[game_count], gs[game_count], mp[game_count], fg[game_count], fga[game_count], fg3[game_count], fg3a[game_count],  fg3_pct[game_count], ft[game_count], fta[game_count], ft_pct[game_count], orb[game_count], drb[game_count], trb[game_count], ast[game_count], stl[game_count], blk[game_count], tov[game_count], pf[game_count], pts[game_count], game_score[game_count], plus_minus[game_count]]
+                                data_no += 1
+                                game_count += 1
+                        npo_all_player_games_df = pd.DataFrame.from_dict(npo_all_player_games, orient = 'index', columns = ['Name', 'Dates', 'Age', 'Location', 'Team', 'Opponent', 'Game Result', 'Started', 'Minutes Played', 'FG', 'FGA', 'FG3', 'FG3A', 'FG3Pct', 'FreeThrows', 'Free Throw Attempts', 'Free Throw Percent', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Steals', 'Blocks', 'Turnovers', 'Personal Fouls', 'Points', 'Game Score', 'Plus Minus'])
+                        # print(npo_all_player_games_df.head())
+                        npo_all_player_games_df.to_csv('npo_all_player_games.csv')
