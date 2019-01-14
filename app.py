@@ -42,7 +42,6 @@ for row in table_body.findAll("tr"):
     for td in row.findAll("td", {"class":"right"}):
            if td.attrs['data-stat'] == "wins":
                wins.append(td.text)
-
 print(wins)
 
 # Shawn firt Scrappin
