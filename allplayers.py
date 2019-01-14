@@ -248,4 +248,4 @@ for team in teams:
                                 game_count += 1
                         npo_all_player_games_df = pd.DataFrame.from_dict(npo_all_player_games, orient = 'index', columns = ['Name', 'Dates', 'Age', 'Location', 'Team', 'Opponent', 'Game Result', 'Started', 'Minutes Played', 'FG', 'FGA', 'FG3', 'FG3A', 'FG3Pct', 'FreeThrows', 'Free Throw Attempts', 'Free Throw Percent', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Steals', 'Blocks', 'Turnovers', 'Personal Fouls', 'Points', 'Game Score', 'Plus Minus'])
                         # print(npo_all_player_games_df.head())
-                        npo_all_player_games_df.to_csv('npo_all_player_games4.csv')
+                        npo_all_player_games_df.to_csv('npo_all_player_games.csv')
