@@ -31,6 +31,7 @@ for team in teams:
             rows = body[0].find_all('tr')
             for row in rows:
                 player_url = url + row.find('a').get('href') #player url
+                # player_url = "https://www.basketball-reference.com/players/c/cartevi01.html"
                 player_response = requests.get(player_url)
                 player_data = player_response.text
                 player_soup = bs(player_data, 'html.parser')
@@ -43,6 +44,12 @@ for team in teams:
                     for stat_row in table:
                         row = stat_row.find_all('th')
                         for r in row:
+
+                            ## where we get the indivual seasons start new function around here
+                            ## for r in row:
+                            ##   get_season_stats(r)
+                            ## something simple like this
+
                             table_break_count = 0
                             gamelog_anchor_tag = r.find('a')
                             print("gamelog_anchor_tag", gamelog_anchor_tag)
@@ -84,12 +91,7 @@ for team in teams:
                             plus_minus = []
                             for r in season_rows:
                                 th = r.find('th', {"data-stat":"ranker"}).text
-                                table_break_count+=1
-                                if table_break_count > 20:
-                                    table_break_count = 0
-                                else:
-                                    date = r.find('td', {"data-stat":"date_game"}).text
-                                    dates.append(date)
+                                if "Rk" not in th:
                                     for q in r.find_all('td'):
                                         if q.attrs['data-stat'] == 'reason':
                                             gs.append('dnp')
@@ -114,6 +116,8 @@ for team in teams:
                                             pts.append('dnp')
                                             game_score.append('dnp')
                                             plus_minus.append('dnp')
+                                        if q.attrs['data-stat'] == "date_game":
+                                            dates.append(q.text)
                                         if q.attrs['data-stat'] == "age":
                                             age.append(q.text)
                                         if q.attrs['data-stat'] == "team_id":
@@ -231,9 +235,13 @@ for team in teams:
                                                 plus_minus.append(0)
                                             else:
                                                 plus_minus.append(q.text)
+
+
                             count+=1
                             game_count = 0
                             for game in dates:
+                                if len(plus_minus) == game_count:
+                                    plus_minus.append('not tracked')
                                 # print('GOR LOOP: ', age[game_count], team_id[game_count])
                                 npo_all_player_games[data_no] = [player_name, dates[game_count], age[game_count], game_location[game_count], team_id[game_count], opp_id[game_count], game_result[game_count], gs[game_count], mp[game_count], fg[game_count], fga[game_count], fg3[game_count], fg3a[game_count],  fg3_pct[game_count], ft[game_count], fta[game_count], ft_pct[game_count], orb[game_count], drb[game_count], trb[game_count], ast[game_count], stl[game_count], blk[game_count], tov[game_count], pf[game_count], pts[game_count], game_score[game_count], plus_minus[game_count]]
                                 data_no += 1
